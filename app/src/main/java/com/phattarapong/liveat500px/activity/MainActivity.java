@@ -1,5 +1,6 @@
 package com.phattarapong.liveat500px.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,13 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.phattarapong.liveat500px.Dao.PhotoItemDao;
 import com.phattarapong.liveat500px.R;
 import com.phattarapong.liveat500px.fragment.MainFragment;
+import com.phattarapong.liveat500px.fragment.MoreInfoFragment;
 import com.phattarapong.liveat500px.manager.Contextor;
 
-public class MainActivity extends AppCompatActivity {
+import org.parceler.Parcels;
+
+public class MainActivity extends AppCompatActivity implements MainFragment.FragmentListener {
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     Toolbar toolBar;
@@ -73,5 +79,22 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPhotoItemClicked(PhotoItemDao dao) {
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.moreInfoContainer);
+        if(frameLayout == null){
+            Intent intent = new Intent(MainActivity.this,MoreInfoActivity.class);
+            intent.putExtra("dao", Parcels.wrap(dao));
+            startActivity(intent);
+        }
+        else{
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.moreInfoContainer, MoreInfoFragment.newInstance(dao))
+                    .commit();
+        }
+
+
     }
 }

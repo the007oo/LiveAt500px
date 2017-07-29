@@ -1,6 +1,8 @@
 package com.phattarapong.liveat500px.fragment;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,11 +13,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.phattarapong.liveat500px.Dao.PhotoItemCollectionDao;
+import com.phattarapong.liveat500px.Dao.PhotoItemDao;
 import com.phattarapong.liveat500px.R;
 import com.phattarapong.liveat500px.adapter.PhotoListAdapter;
 import com.phattarapong.liveat500px.dataType.MutableInteger;
@@ -33,6 +37,10 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 public class MainFragment extends Fragment {
+
+    public interface FragmentListener{
+        void onPhotoItemClicked(PhotoItemDao dao);
+    }
     /**************
      * Variable
      **************/
@@ -81,6 +89,12 @@ public class MainFragment extends Fragment {
     private void init() {
         photoListManager = new PhotoListManager();
         lastPositionInteger = new MutableInteger(-1);
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("Compat", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("Hello","hello");
+        editor.apply();
+
     }
 
     private void initInstances(View rootView, Bundle savedInstancestate) {
@@ -93,7 +107,7 @@ public class MainFragment extends Fragment {
         listAdapter = new PhotoListAdapter(lastPositionInteger);
         listAdapter.setDao(photoListManager.getDao());
         listView.setAdapter(listAdapter);
-
+        listView.setOnItemClickListener(listViewItemClickListener);
         swipRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipRefresh);
         swipRefresh.setOnRefreshListener(pullToRefreshData);
 
@@ -231,6 +245,19 @@ public class MainFragment extends Fragment {
                     }
                 }
             }
+        }
+    };
+    AdapterView.OnItemClickListener listViewItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(position<photoListManager.getCount())
+            {
+                PhotoItemDao dao = photoListManager.getDao().getData().get(position);
+                FragmentListener listener =(FragmentListener) getActivity();
+                listener.onPhotoItemClicked(dao);
+            }
+
+
         }
     };
 

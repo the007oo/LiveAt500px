@@ -29,12 +29,13 @@ public class PhotoListAdapter extends BaseAdapter {
     }
 
     PhotoItemCollectionDao dao;
+
     @Override
     public int getCount() {
-        if(dao == null){
+        if (dao == null) {
             return 0;
         }
-        if (dao.getData() == null){
+        if (dao.getData() == null) {
             return 0;
         }
         return dao.getData().size();
@@ -62,7 +63,7 @@ public class PhotoListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return position == getCount() - 1 ? 1:0;
+        return position == getCount() - 1 ? 1 : 0;
     }
 
     @Override
@@ -72,32 +73,31 @@ public class PhotoListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-if(position == getCount() -1){
-    ProgressBar item;
-    if(convertView != null){
-        item = (ProgressBar) convertView;
-    }
-    else
-        item = new ProgressBar(parent.getContext());
-    return item;
-}
-            PhotoListItem photoListItem;
-            if(convertView != null)
-                photoListItem = (PhotoListItem) convertView;
-            else
-                photoListItem = new PhotoListItem(parent.getContext());
+        if (position == getCount() - 1) {
+            ProgressBar item;
+            if (convertView != null) {
+                item = (ProgressBar) convertView;
+            } else
+                item = new ProgressBar(parent.getContext());
+            return item;
+        }
+        PhotoListItem photoListItem;
+        if (convertView != null)
+            photoListItem = (PhotoListItem) convertView;
+        else
+            photoListItem = new PhotoListItem(parent.getContext());
 
-        PhotoItemDao dao = (PhotoItemDao)getItem(position);
+        PhotoItemDao dao = (PhotoItemDao) getItem(position);
         photoListItem.setNameText(dao.getCaption());
         photoListItem.setDescription(dao.getUsername() + "\n" + dao.getCamera());
         photoListItem.setImageUrl(dao.getImageUrl());
 
-        if(lastPostionInteger.getValue()<position) {
+        if (lastPostionInteger.getValue() < position) {
             Animation animation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.up_form_bottom);
             photoListItem.startAnimation(animation);
             lastPostionInteger.setValue(position);
         }
-            return photoListItem;
+        return photoListItem;
 //        }
 //        else {
 //            TextView photoListItem;
@@ -110,7 +110,8 @@ if(position == getCount() -1){
 //        }
 
     }
-    public void increaseLastPosition(int amount){
-         lastPostionInteger.setValue(lastPostionInteger.getValue() + amount);
+
+    public void increaseLastPosition(int amount) {
+        lastPostionInteger.setValue(lastPostionInteger.getValue() + amount);
     }
 }
